@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ConnectButton from "@/components/ui/ConnectButton";
@@ -7,73 +8,133 @@ import NetworkBadge from "@/components/botchain/NetworkBadge";
 import BuiltOnBotChain from "@/components/botchain/BuiltOnBotChain";
 import { app } from "@/lib/app-config";
 
-export type NavItem = { href: string; label: string };
+export interface OrbitNavLink {
+  href: string;
+  label: string;
+}
 
-interface PageShellProps {
+export interface PageShellProps {
   children: React.ReactNode;
-  nav?: NavItem[];
+  nav?: OrbitNavLink[];
   title?: string;
   description?: string;
 }
 
 /**
- * App frame.
+ * Archetype Q · Orbit App Shell.
  *
- * A top bar rather than ghost-pay's 220px rail. These apps have two or three screens, and a rail
- * that wide spends a fifth of a laptop window — and all of a phone — on three links. The bar is
- * the same at every width, which also means there is no drawer, no focus trap and no hamburger to
- * get wrong.
- *
- * Height is `100dvh` rather than `100vh`. On mobile Safari and Chrome, `100vh` is the viewport
- * with the browser chrome *retracted*, so a `h-screen` layout with `overflow-hidden` pushes its
- * own footer under the address bar and the user cannot scroll to it.
+ * Implements a minimal, serene planetary environment:
+ * - Wordmark top-left with orbit halo glyph
+ * - Clean connect & network status top-right
+ * - No heavy full-width banner bars
+ * - Centered celestial layout focused on the central ring
+ * - Quiet footer attribution anchored beneath the main ring
  */
-export default function PageShell({ children, nav = [], title, description }: PageShellProps) {
+export default function PageShell({
+  children,
+  nav = [],
+  title,
+  description,
+}: PageShellProps) {
+  const pathname = usePathname();
+
   return (
     <div
-      className="flex flex-col overflow-x-hidden"
-      style={{ minHeight: "100dvh", background: "var(--bg-base)" }}
+      className="flex min-h-[100dvh] flex-col overflow-x-hidden selection:bg-[var(--accent)] selection:text-[var(--accent-ink)]"
+      style={{
+        backgroundColor: "var(--bg-base, #2D3A1F)",
+        color: "var(--text-primary, #EEF2DD)",
+        fontFamily: "var(--font-onest), system-ui, sans-serif",
+      }}
     >
-      <header
-        className="sticky top-0 z-30 flex-shrink-0"
-        style={{
-          borderBottom: "1px solid var(--border-subtle)",
-          background: "var(--bg-surface)",
-        }}
-      >
-        <div className="mx-auto w-full max-w-[880px] px-4 md:px-6">
-          <div className="flex items-center gap-3 py-2.5">
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0 no-underline">
-              <span
-                className="w-2 h-2 flex-shrink-0"
-                style={{ background: "var(--accent)" }}
+      {/* Floating minimalist header */}
+      <header className="relative z-20 w-full px-5 py-4 sm:px-8 sm:py-6">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              className="group flex items-center gap-3 no-underline transition-opacity hover:opacity-90"
+            >
+              {/* Pulsing orbit halo mark */}
+              <div
+                className="relative flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border-default)]"
+                style={{ backgroundColor: "var(--bg-surface)" }}
                 aria-hidden="true"
-              />
+              >
+                <div
+                  className="h-2.5 w-2.5 rounded-full transition-transform duration-300 group-hover:scale-125"
+                  style={{ backgroundColor: "var(--accent)" }}
+                />
+              </div>
               <span
-                className="text-[14px] font-semibold tracking-[-0.01em]"
+                className="text-2xl font-serif tracking-tight"
                 style={{ color: "var(--text-primary)" }}
               >
                 {app.name}
               </span>
             </Link>
 
-            <div className="flex-1" />
+            {nav.length > 0 && (
+              <nav className="hidden items-center gap-1 sm:flex" aria-label="Primary navigation">
+                {nav.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`rounded-full px-3.5 py-1 text-xs font-medium tracking-wide transition-colors ${
+                        isActive
+                          ? "bg-[var(--bg-surface)] text-[var(--accent)] border border-[var(--border-subtle)]"
+                          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <NetworkBadge />
-            <div className="w-[150px] md:w-[180px] flex-shrink-0">
+            <div className="w-[140px] sm:w-[170px] flex-shrink-0">
               <ConnectButton />
             </div>
           </div>
-
-          {nav.length > 0 && <Nav items={nav} />}
         </div>
+
+        {/* Mobile secondary nav links if present */}
+        {nav.length > 0 && (
+          <div className="mx-auto mt-3 flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 sm:hidden">
+            {nav.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-full px-3 py-1 text-xs whitespace-nowrap ${
+                    isActive
+                      ? "bg-[var(--bg-surface)] text-[var(--accent)] border border-[var(--border-subtle)]"
+                      : "text-[var(--text-muted)]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-[880px] px-4 py-6 md:px-6 md:py-8">
+      {/* Main Celestial Body Area */}
+      <main className="relative z-10 flex flex-1 flex-col mx-auto w-full max-w-5xl px-4 py-4 sm:px-8 sm:py-6">
         {(title || description) && (
-          <div className="mb-6">
+          <div className="mb-6 text-center sm:mb-8">
             {title && (
               <h1
-                className="text-[20px] md:text-[24px] font-semibold tracking-[-0.015em]"
+                className="text-3xl font-serif tracking-tight sm:text-4xl"
                 style={{ color: "var(--text-primary)" }}
               >
                 {title}
@@ -81,61 +142,44 @@ export default function PageShell({ children, nav = [], title, description }: Pa
             )}
             {description && (
               <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{ color: "var(--text-secondary)" }}
+                className="mt-2 text-sm text-[var(--text-muted)] sm:text-base max-w-xl mx-auto leading-relaxed"
               >
                 {description}
               </p>
             )}
           </div>
         )}
-        {children}
+        <div className="flex-1 w-full">{children}</div>
       </main>
 
-      {/*
-        The ecosystem footer is required, not decorative. BOT Chain's project assessment criteria
-        ask that the footer or an ecosystem-partnership section carry the BOT Chain name and link
-        to both botchain.ai and the explorer; a site without it is not counted, however complete
-        the product is. It lives in the shared shell so no project can ship missing it.
-      */}
-      <footer
-        className="flex-shrink-0 mx-auto w-full max-w-[880px] px-4 py-6 md:px-6"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
-      >
-        <div className="flex flex-col gap-3">
-          <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
-            {app.tagline}
+      {/* Quiet Orbit Footnote */}
+      <footer className="relative z-10 w-full px-5 py-6 sm:px-8 text-center text-xs">
+        <div className="mx-auto max-w-5xl border-t border-[var(--border-subtle)] pt-6">
+          <p className="text-[var(--text-muted)] mb-3">
+            {app.tagline} • Rotating savings with people you trust.
           </p>
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="inline-flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[var(--text-tertiary)]">
+            <span className="inline-flex items-center gap-1.5">
               <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: "var(--accent)" }}
                 aria-hidden="true"
-                className="inline-block w-2 h-2 flex-shrink-0"
-                style={{ background: "var(--accent)", borderRadius: "1px" }}
               />
-              <BuiltOnBotChain
-                className="text-[11px] uppercase tracking-[0.06em]"
-                style={{ color: "var(--text-secondary)" }}
-              />
+              <BuiltOnBotChain className="text-[11px] uppercase tracking-wider text-[var(--text-muted)]" />
             </span>
-
             <a
               href="https://botchain.ai"
               target="_blank"
               rel="noreferrer"
-              className="text-[11px] underline"
-              style={{ color: "var(--text-tertiary)" }}
+              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
             >
               botchain.ai
             </a>
-
             <a
               href="https://scan.botchain.ai"
               target="_blank"
               rel="noreferrer"
-              className="text-[11px] underline"
-              style={{ color: "var(--text-tertiary)" }}
+              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
             >
               BOT Chain Explorer
             </a>
@@ -143,35 +187,5 @@ export default function PageShell({ children, nav = [], title, description }: Pa
         </div>
       </footer>
     </div>
-  );
-}
-
-/**
- * Horizontal tabs. `aria-current` rather than colour alone marks the active one, and the active
- * check is an exact match so `/` does not light up on every page.
- */
-function Nav({ items }: { items: NavItem[] }) {
-  const pathname = usePathname();
-
-  return (
-    <nav className="flex items-center gap-1 -mb-px overflow-x-auto">
-      {items.map((item) => {
-        const active = pathname === item.href;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={active ? "page" : undefined}
-            className="nav-link flex items-center px-3 py-2 text-[12px] uppercase tracking-[0.04em] no-underline whitespace-nowrap"
-            style={{
-              color: active ? "var(--accent)" : "var(--text-secondary)",
-              borderBottom: `1px solid ${active ? "var(--accent)" : "transparent"}`,
-            }}
-          >
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
   );
 }
