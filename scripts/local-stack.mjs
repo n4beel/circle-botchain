@@ -58,6 +58,7 @@ spawn(
     "--chain-id", String(CHAIN_ID),
     "--accounts", "10",
     "--timestamp", String(startTimestamp),
+    "--block-time", "1",
     "--silent"
   ],
   {
@@ -244,6 +245,7 @@ Seeded Circles:
   - Circle #6: "Next in Turn" (Active — account 0 is current round 2 recipient and unpaid)
 =====================================================
 `);
+  process.exit(0);
 }
 
 main().catch((err) => {

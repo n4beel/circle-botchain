@@ -139,3 +139,16 @@ All findings from `docs/specs/FEEDBACK-circle.md` addressed in order inside `cir
 - **Console Errors:** 0
 - **Hydration Warnings:** 0
 
+## Feedback round 2
+
+1. **Local-stack autonomous mining (`--block-time 1`):**
+   - Configured `anvil` in `scripts/local-stack.mjs` with `--block-time 1` to produce blocks autonomously on a 1-second cadence.
+   - Seeded states across all 6 scenarios (forming circle, active round 2, complete circle, failed circle with reclaimable funds, cancelled circle after join window, active circle with account 0 as recipient) verified.
+   - Final chain timestamp matches wall clock (`diff: 1s`, within 120s limit).
+   - Confirmed autonomous block progression without manual mining:
+     ```bash
+     b1=$(cast block-number --rpc-url http://127.0.0.1:8715); sleep 3; b2=$(cast block-number --rpc-url http://127.0.0.1:8715); echo "$b1 -> $b2"
+     # Output: 269 -> 272
+     ```
+
+
