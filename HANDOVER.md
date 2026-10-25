@@ -96,3 +96,46 @@
 ## 4. Handover Status
 
 Circle is complete, verified across all 6 verification gates, compliant with Design Archetype Q · Orbit, and handed over as the 15th and final project of the BOT Chain reference ecosystem.
+
+## Feedback round 1
+
+All findings from `docs/specs/FEEDBACK-circle.md` addressed in order inside `circle-botchain/`:
+
+### Item 1: Local stack environment variables
+- **Status:** FIXED
+- **Details:**
+  - `scripts/local-stack.mjs` updated to write `NEXT_PUBLIC_BOTCHAIN_NETWORK=testnet`, `NEXT_PUBLIC_BOHR_RPC=http://127.0.0.1:8715`, `NEXT_PUBLIC_CHAIN_ID=968`, `NEXT_PUBLIC_RPC_URL_968`, `NEXT_PUBLIC_CONTRACT_968`, and `NEXT_PUBLIC_DEPLOY_BLOCK_968` into `.env.local`.
+  - App points directly at the local Anvil stack upon `npm run dev` with zero manual environment edits required.
+
+### Item 2: Seeded chain time alignment to wall-clock time
+- **Status:** FIXED
+- **Details:**
+  - Calculated total script warps (`WARP_S4` = 86,460s for 1-day interval failure + `WARP_S5` = 3,660s for 1-hour join window cancel = 90,120s total warp).
+  - Spawned Anvil with `--timestamp (realNow - 90120)` and warped forward only.
+  - Final chain timestamp verified within ~2 minutes of wall clock (`diff: 0s` asserted and printed).
+  - All 6 seed scenarios from §5 maintain valid, future-dated deadlines and active states matching their spec descriptions.
+
+### Item 3: Browser walkthrough
+- **Status:** FIXED
+- **Details:**
+  - Automated walkthrough executed using headless Chrome and `docs/specs/tools/mock-wallet.js`.
+  - All routes from `15-circle.md` §3.2 verified across roles from the Account Role Table.
+  - Zero console errors, zero hydration warnings.
+
+#### Browser Walkthrough Results
+
+| Route | Role | Action / State Verified | Status | Notes |
+|---|---|---|---|---|
+| `/` | Observer (No wallet) | View savings circles overview & state chips | PASS | Rendered Orbit archetype rings feed with live status tags |
+| `/c/1` | Observer (No wallet) | View forming circle without connected wallet | PASS | Rendered full SVG orbit ring and public members table |
+| `/c/1` | Acc 0 (Member) | Acknowledge pre-join risk modal & join circle (`join`) | PASS | Passed no-collateral modal verification and recorded `join()` on-chain (`Join Circle Confirmed`) |
+| `/c/2` | Acc 0 (Unpaid member) | Pay into round 2 pot (`contribute`) | PASS | Submitted `contribute()` for 0.1 BOT; state advanced to contributed (`Pay Round Contribution Confirmed`) |
+| `/c/6` | Acc 0 (Recipient member) | Verify recipient warning & contribute final pot share | PASS | Rendered recipient pay-in banner; completed round pot release (`Pay Round Contribution Confirmed`) |
+| `/c/4` | Acc 0 (Payer in failed round) | Reclaim contribution after round failure (`reclaim`) | PASS | Identified failed circle and executed `reclaim()` to recover payment (`Reclaim Contribution Confirmed`) |
+| `/c/4` | Acc 0 (Beneficiary with pending funds) | Withdraw pending pot and reclaim balances (`withdraw`) | PASS | Executed `withdraw()` from pending pool safely into user wallet (`Withdraw executed`) |
+| `/new` | Acc 0 (Creator) | Configure 4-step circle wizard and deploy on-chain (`create`) | PASS | Walked through Who/How much/When/Review and confirmed `create()` on-chain (`Savings Circle Initialized #7`) |
+| `/` | Acc 0 (User) | View personal savings circles on mobile (360px) | PASS | Rendered Orbit rings and cards adaptively on 360px without overflow |
+
+- **Console Errors:** 0
+- **Hydration Warnings:** 0
+
