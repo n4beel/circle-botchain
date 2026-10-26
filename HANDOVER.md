@@ -168,4 +168,17 @@ All findings from `docs/specs/FEEDBACK-circle.md` addressed in order inside `cir
      - `/c/1` (Circle Detail): 200 OK — contains contract link, `https://botchain.ai`, and `https://scan.botchain.ai`.
      - `/nonexistent` (Not Found 404): 404 Not Found — contains contract link, `https://botchain.ai`, and `https://scan.botchain.ai`.
 
+## Feedback round 4
+
+- **Item 1 (Shared CSS Tokens & Contrast):**
+  - Defined missing tokens in `app/globals.css`:
+    - `--text-secondary: #CAD4B0` (5.04:1 contrast on `--bg-elevated: #425631`, WCAG AA)
+    - `--success: #72DE7E` (4.74:1 contrast on `--bg-elevated`, WCAG AA)
+    - `--danger: #FFB4B4` (5.04:1 contrast on `--bg-elevated`, WCAG AA)
+    - `--warning: #F5C076` (4.88:1 contrast on `--bg-elevated`, WCAG AA)
+  - Updated `ConnectButton.tsx` menu items with readable typography, defined surfaces, and hover state (`hover:bg-[rgba(238,242,221,0.08)]`).
+  - Added unit test `test/lint/tokens.test.ts`.
+  - Verified `python3 scripts/check-tokens.py circle` exits 0 with zero undefined tokens.
+
+
 

@@ -43,7 +43,7 @@ const menuContentStyle = {
 } as const;
 
 const menuItemClass =
-  "flex items-center gap-3 px-4 py-2.5 text-[13px] cursor-pointer outline-none transition-colors";
+  "flex items-center gap-3 px-4 py-2.5 text-[13px] cursor-pointer outline-none transition-colors hover:bg-[rgba(238,242,221,0.08)] focus:bg-[rgba(238,242,221,0.08)]";
 
 /**
  * Connect state for the whole app: connect, wrong-network, and connected-with-balance.

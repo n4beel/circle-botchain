@@ -29,12 +29,16 @@
   --border-default: #5A7042;
   --border-strong: #728A55;
   --text-primary: #EEF2DD;
+  --text-secondary: #CAD4B0;
   --text-muted: #B5C09A;
   --text-tertiary: #8A9670;
   --accent: #D9E86B;
   --accent-ink: #1B2511;
   --warn: #F2A46B;
   --fail: #E57373;
+  --success: #72DE7E;
+  --danger: #FFB4B4;
+  --warning: #F5C076;
 }
 
 @layer base {
