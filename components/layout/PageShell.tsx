@@ -7,6 +7,7 @@ import ConnectButton from "@/components/ui/ConnectButton";
 import NetworkBadge from "@/components/botchain/NetworkBadge";
 import BuiltOnBotChain from "@/components/botchain/BuiltOnBotChain";
 import { app } from "@/lib/app-config";
+import { footerLinks } from "@/lib/botchain/chain";
 
 export interface OrbitNavLink {
   href: string;
@@ -37,6 +38,7 @@ export default function PageShell({
   description,
 }: PageShellProps) {
   const pathname = usePathname();
+  const { site, explorer } = footerLinks();
 
   return (
     <div
@@ -168,7 +170,7 @@ export default function PageShell({
               <BuiltOnBotChain className="text-[11px] uppercase tracking-wider text-[var(--text-muted)]" />
             </span>
             <a
-              href="https://botchain.ai"
+              href={site}
               target="_blank"
               rel="noreferrer"
               className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"
@@ -176,7 +178,7 @@ export default function PageShell({
               botchain.ai
             </a>
             <a
-              href="https://scan.botchain.ai"
+              href={explorer}
               target="_blank"
               rel="noreferrer"
               className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors underline underline-offset-2"

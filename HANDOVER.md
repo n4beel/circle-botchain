@@ -151,4 +151,21 @@ All findings from `docs/specs/FEEDBACK-circle.md` addressed in order inside `cir
      # Output: 269 -> 272
      ```
 
+## Feedback round 3
+
+1. **Footer three-link compliance (Item 1 & Item 2):**
+   - Added `BOTCHAIN_SITE_URL = "https://botchain.ai"` and `BOTCHAIN_EXPLORER_URL = "https://scan.botchain.ai"` in `lib/botchain/chain.ts`.
+   - Added exported helper `footerLinks(chainId?: number): FooterLinks` returning `{ contract, site, explorer }` in `lib/botchain/chain.ts` and re-exported from `lib/botchain/deployment.ts`.
+   - Updated `components/botchain/BuiltOnBotChain.tsx` to consume `footerLinks()`.
+   - Updated `components/layout/PageShell.tsx` to use `footerLinks()` and render all three required links: contract on explorer (when deployed), `https://botchain.ai`, and `https://scan.botchain.ai` in Circle's orbit aesthetic.
+   - Created `app/not-found.tsx` wrapped in `PageShell` ensuring the footer is present on 404 pages.
+   - Added unit test suite in `lib/botchain/__tests__/chain.test.ts` testing chain IDs 677 and 968 for deployed and undeployed configurations.
+   - Added `.netlify/` to `.gitignore`.
+
+2. **Browser / Route Verification (Item 3):**
+   - Verified local stack on port 8715 (Anvil) and port 3015 (Next.js):
+     - `/` (Home): 200 OK — contains contract link, `https://botchain.ai`, and `https://scan.botchain.ai`.
+     - `/c/1` (Circle Detail): 200 OK — contains contract link, `https://botchain.ai`, and `https://scan.botchain.ai`.
+     - `/nonexistent` (Not Found 404): 404 Not Found — contains contract link, `https://botchain.ai`, and `https://scan.botchain.ai`.
+
 
